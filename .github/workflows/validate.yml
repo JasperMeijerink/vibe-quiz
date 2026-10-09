@@ -1,0 +1,23 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test hook script
+        run: |
+          shellcheck scripts/auto-quiz.sh tests/auto-quiz-test.sh
+          sh tests/auto-quiz-test.sh
+
+      - name: Install Claude Code
+        run: curl -fsSL https://claude.ai/install.sh | bash
+
+      - name: Validate plugin
+        run: ~/.local/bin/claude plugin validate --strict .

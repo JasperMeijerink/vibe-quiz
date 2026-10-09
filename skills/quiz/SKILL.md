@@ -23,6 +23,9 @@ If `questions_per_quiz` is out of range, clamp it to 1–4.
 
 Arguments: `$ARGUMENTS`
 - `--depth <level>` overrides the depth for this quiz only.
+- `--auto` means the vibe-quiz hook started this quiz, not the user. If AskUserQuestion
+  isn't available (e.g. under `claude -p` or in CI), or there's nothing to ask about, end
+  your turn right away without writing anything.
 - Any other text is the **topic**. Ask only about that part of the work.
 
 ## Steps
@@ -80,7 +83,7 @@ The quiz is skipped if the user dismisses the prompt, picks "Other" and types so
 like "skip", or the prompt times out because they're away. In that case reply `Skipped.`
 and end your turn. Don't ask again.
 
-If AskUserQuestion isn't available, fall back to plain text: number the questions, letter
+If AskUserQuestion isn't available and this is a manual quiz (no `--auto`), fall back to plain text: number the questions, letter
 the options A–D, ask the user to reply like `1B 2D 3A`, and end your turn to wait.
 
 ### 4. Feedback
