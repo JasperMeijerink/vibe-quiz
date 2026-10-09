@@ -1,0 +1,69 @@
+{
+  "name": "vibe-quiz",
+  "displayName": "Vibe Quiz",
+  "version": "0.1.0",
+  "description": "Keeps you in the loop on AI-assisted work: short multiple-choice quizzes about what was just built and why, with configurable depth and frequency.",
+  "author": {
+    "name": "Jasper"
+  },
+  "repository": "https://github.com/YOUR-USERNAME/vibe-quiz",
+  "keywords": ["learning", "quiz", "understanding", "education", "review"],
+  "userConfig": {
+    "trigger": {
+      "type": "string",
+      "title": "Quiz trigger",
+      "description": "When quizzes start automatically. 'manual' means only when you run /vibe-quiz:quiz.",
+      "options": ["manual", "commits", "turns", "session_end"],
+      "default": "turns"
+    },
+    "interval": {
+      "type": "number",
+      "title": "Interval",
+      "description": "For 'commits' or 'turns': quiz every N commits or every N Claude replies.",
+      "min": 1,
+      "max": 50,
+      "default": 8
+    },
+    "questions_per_quiz": {
+      "type": "number",
+      "title": "Questions per quiz",
+      "description": "How many multiple-choice questions each quiz asks.",
+      "min": 1,
+      "max": 8,
+      "default": 3
+    },
+    "depth": {
+      "type": "string",
+      "title": "Question depth",
+      "description": "recall = what was done, understand = why, apply = consequences, challenge = critique and alternatives.",
+      "options": ["recall", "understand", "apply", "challenge"],
+      "default": "understand"
+    },
+    "adaptive": {
+      "type": "boolean",
+      "title": "Adaptive depth",
+      "description": "Go easier after misses and deeper after correct streaks.",
+      "default": true
+    },
+    "focus": {
+      "type": "string",
+      "title": "Question focus",
+      "description": "Ask about design decisions, about the implementation itself, or both.",
+      "options": ["decisions", "implementation", "both"],
+      "default": "both"
+    },
+    "on_wrong": {
+      "type": "string",
+      "title": "On a wrong answer",
+      "description": "explain = show the answer and why; explain_and_retry = also re-test the concept later; log_only = just record it for /vibe-quiz:stats.",
+      "options": ["explain", "explain_and_retry", "log_only"],
+      "default": "explain"
+    },
+    "allow_skip": {
+      "type": "boolean",
+      "title": "Allow skipping",
+      "description": "Offer a 'skip this quiz' option.",
+      "default": true
+    }
+  }
+}
