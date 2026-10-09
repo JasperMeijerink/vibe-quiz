@@ -23,8 +23,12 @@ get() { # key  (reads $file)
   sed -n "s/^$1=//p" "$file" 2>/dev/null | head -n 1
 }
 
+is_num() { # small non-negative integer without leading zeros
+  case $1 in '' | *[!0-9]* | 0?* | ?????*) return 1 ;; esac
+}
+
 save() { # writes $turns $commits $pause to $file
-  mkdir -p "$(dirname "$file")" 2>/dev/null || exit 0
+  mkdir -p "$(dirname "$file")" 2>/dev/null || return 1
   tmp="$file.$$"
   printf 'turns=%s\ncommits=%s\npause=%s\n' "$turns" "$commits" "$pause" >"$tmp" 2>/dev/null &&
     mv -f "$tmp" "$file" 2>/dev/null
@@ -32,9 +36,12 @@ save() { # writes $turns $commits $pause to $file
 
 load() {
   turns=$(get turns); commits=$(get commits); pause=$(get pause)
-  case $turns in '' | *[!0-9]*) turns=0 ;; esac
-  case $commits in '' | *[!0-9]*) commits=0 ;; esac
-  case $pause in session | [1-9] | [1-9][0-9]) ;; *) pause= ;; esac
+  is_num "$turns" || turns=0
+  is_num "$commits" || commits=0
+  case $pause in
+    session) ;;
+    *) { is_num "$pause" && [ "$pause" -ge 1 ] && [ "$pause" -le 99 ]; } || pause= ;;
+  esac
 }
 
 clean_id() { # keep only safe filename characters
@@ -53,12 +60,19 @@ if [ "$event" = pause ]; then
   load
   case $arg in
     '') pause=session; msg="Automatic quizzes paused for this session. /vibe-quiz:pause off resumes them." ;;
-    off | resume) pause=; msg="Automatic quizzes resumed." ;;
-    *[!0-9]* | 0) echo "Usage: /vibe-quiz:pause [n|off]"; exit 0 ;;
-    *) [ "$arg" -gt 99 ] && arg=99
+    off) pause=; msg="Automatic quizzes resumed." ;;
+    *[!0-9]*) echo "Usage: /vibe-quiz:pause [n|off]"; exit 0 ;;
+    *) arg=$(printf '%s' "$arg" | sed 's/^0*//')
+       case $arg in
+         '') echo "Usage: /vibe-quiz:pause [n|off]"; exit 0 ;;
+         ???*) arg=99 ;;
+       esac
        pause=$arg; msg="Skipping the next $arg automatic quiz(zes)." ;;
   esac
-  save
+  if ! save; then
+    echo "vibe-quiz: couldn't save the pause setting."
+    exit 0
+  fi
   echo "$msg"
   exit 0
 fi
@@ -72,14 +86,15 @@ data=${CLAUDE_PLUGIN_DATA:-}
 [ -n "$data" ] || exit 0
 
 sid=$(printf '%s' "$input" |
-  sed -n 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)
+  grep -o '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n 1 |
+  sed 's/.*"\([^"]*\)"$/\1/')
 sid=$(clean_id "$sid")
 [ -n "$sid" ] || exit 0
 
 trigger=${CLAUDE_PLUGIN_OPTION_TRIGGER:-turns}
 interval=${CLAUDE_PLUGIN_OPTION_INTERVAL:-8}
 interval=${interval%%.*}
-case $interval in '' | *[!0-9]*) interval=8 ;; esac
+is_num "$interval" || interval=8
 [ "$interval" -lt 1 ] && interval=1
 [ "$interval" -gt 50 ] && interval=50
 
@@ -100,8 +115,6 @@ fi
 
 # Claude is already continuing because of a Stop hook (e.g. finishing a quiz).
 has '"stop_hook_active"[[:space:]]*:[[:space:]]*true' && exit 0
-# Inside a subagent.
-has '"agent_id"[[:space:]]*:' && exit 0
 
 if [ "$trigger" = turns ]; then
   turns=$((turns + 1))
@@ -115,8 +128,9 @@ if [ "$count" -lt "$interval" ]; then
   exit 0
 fi
 
-# Due. Wait for a calmer moment if background work is still running.
-if has '"background_tasks"[[:space:]]*:[[:space:]]*\[[[:space:]]*\{'; then
+# Due. Wait for a calmer moment if background work is still running, but not
+# forever: a dev server or watcher can stay listed for the whole session.
+if [ "$count" -lt $((interval * 2)) ] && has '"background_tasks"[[:space:]]*:[[:space:]]*\[[[:space:]]*\{'; then
   save
   exit 0
 fi
@@ -131,7 +145,7 @@ case $pause in
 esac
 
 save
-find "$data/sessions" -type f -name '*.state' -mtime +7 -exec rm -f {} + 2>/dev/null
+find "$data/sessions" -type f -name '*.state*' -mtime +7 -exec rm -f {} + 2>/dev/null
 
 printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"vibe-quiz: time for a quick pop-up quiz. Invoke the vibe-quiz:quiz skill now with the argument --auto, then end your turn. If the skill cannot run here (denied, unavailable or non-interactive), end your turn silently: do not mention the quiz or the error."}}'
 exit 0

@@ -46,7 +46,7 @@ touched file only to confirm a fact you'll test. Don't change anything.
 
 If this session has little or no work in it (for example a fresh session), use the most
 recent commits instead and say so in your intro line. If there's nothing to ask about at
-all, say so in one line and stop. Don't invent questions.
+all, say so in one line and stop (with `--auto`, stop silently). Don't invent questions.
 
 ### 2. Write the questions
 

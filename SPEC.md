@@ -43,13 +43,14 @@ work happens → trigger fires → quiz skill gathers context
 
 **Delivery.** A quiz only ever starts from the `Stop` hook. When it fires, the hook returns `hookSpecificOutput.additionalContext` telling Claude to run the quiz skill. `PostToolUse` only counts, because context it injects arrives next to a tool result in the middle of a tool chain, not at a natural pause. ([hooks docs](https://code.claude.com/docs/en/hooks))
 
-Both hooks call `scripts/auto-quiz.sh` (POSIX `sh`, no dependencies). A due quiz that hits a guard stays due and fires at the next calm `Stop`.
+Both hooks call `scripts/auto-quiz.sh` (POSIX `sh`, no dependencies). Every finished reply counts as a turn, including one that ran a manual quiz.
 
 **Guards.** Don't fire when:
-- `stop_hook_active` is true (prevents loops)
-- the event carries `agent_id` (a subagent)
-- `background_tasks` is non-empty (work is still running)
-- the session is paused
+- `stop_hook_active` is true (prevents loops; that reply isn't counted either)
+- `background_tasks` is non-empty (work is still running). The quiz stays due, but fires anyway at 2× the interval, because a dev server or watcher can stay listed all session
+- the session is paused (the due quiz is used up)
+
+Subagents fire `SubagentStop`, not `Stop`, so they never start a quiz.
 
 **Non-interactive runs.** A hook can't tell it is running under `claude -p` or CI, and in those runs the multiple-choice prompt doesn't exist. So the hook calls the skill with `--auto`, and an `--auto` quiz without AskUserQuestion does nothing. In practice `claude -p` already denies the model's Skill call (nobody can approve it), and the hook message tells Claude to end its turn silently in that case; this was tested. In an interactive session the first automatic quiz asks permission to run the skill; choosing "always allow" (or `Skill(vibe-quiz:quiz)` in `permissions.allow`) avoids the prompt after that. The plain-text fallback is only for a manual `/vibe-quiz:quiz`.
 
@@ -109,7 +110,7 @@ All settings live in `userConfig` in `.claude-plugin/plugin.json`. Claude Code p
 | Name | Purpose |
 |---|---|
 | `/vibe-quiz:quiz [topic] [--depth X]` | Quiz now, optionally on a topic or at a given depth |
-| `/vibe-quiz:pause [n\|off]` | Pause automatic quizzes for this session, skip the next n, or resume (`off`). User-only: Claude can't invoke it |
+| `/vibe-quiz:pause [n\|off]` | Pause automatic quizzes for this session, skip the next n (max 99), or resume (`off`). User-only: Claude can't invoke it |
 
 That's all for now. More commands only when there's a clear need.
 
@@ -119,7 +120,7 @@ Only what automatic triggers need.
 
 - `${CLAUDE_PLUGIN_DATA}/sessions/<session_id>.state`: `key=value` lines with turns and commits since the last quiz, and the pause state. Counted per session, so parallel sessions and worktrees don't interfere.
 - Written only by bundled scripts. `CLAUDE_PLUGIN_DATA` is exported to hook processes but not to Claude's Bash tool, so the pause skill calls `scripts/auto-quiz.sh pause` with `${CLAUDE_PLUGIN_DATA}` and `${CLAUDE_SESSION_ID}` substituted into its Markdown.
-- The script prunes session files older than a week.
+- When a quiz fires, the script prunes session files older than about a week.
 - No answers, scores or source code are stored. Claude Code deletes the data folder when the plugin is uninstalled.
 
 ## 10. Repo layout

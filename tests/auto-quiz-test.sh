@@ -34,10 +34,18 @@ check "turns: counter reset" no "$(fired stop "$(stop_json s1)")"
 # guards
 export CLAUDE_PLUGIN_OPTION_INTERVAL=1
 check "guard: stop_hook_active" no "$(fired stop '{"session_id":"s2","stop_hook_active":true,"background_tasks":[]}')"
-check "guard: subagent" no "$(fired stop "$(stop_json s3 ',"agent_id":"a1"')")"
 check "guard: background task" no "$(fired stop '{"session_id":"s4","stop_hook_active":false,"background_tasks":[{"id":"t1","type":"shell"}]}')"
 check "guard: fires once background is done" yes "$(fired stop "$(stop_json s4)")"
-check "guard: escaped text in message" yes "$(fired stop "$(stop_json s5 ',"last_assistant_message":"see \"agent_id\": x"')")"
+check "guard: escaped text in message" yes "$(fired stop "$(stop_json s5 ',"last_assistant_message":"see \"stop_hook_active\": true"')")"
+
+# background work defers a due quiz, but at most until 2x the interval
+export CLAUDE_PLUGIN_OPTION_INTERVAL=2
+busy='{"session_id":"s11","stop_hook_active":false,"background_tasks":[{"id":"t1","type":"shell"}]}'
+check "busy: 1 of 2" no "$(fired stop "$busy")"
+check "busy: due but deferred" no "$(fired stop "$busy")"
+check "busy: still deferred" no "$(fired stop "$busy")"
+check "busy: fires at 2x interval" yes "$(fired stop "$busy")"
+export CLAUDE_PLUGIN_OPTION_INTERVAL=1
 
 # manual trigger never fires
 export CLAUDE_PLUGIN_OPTION_TRIGGER=manual
@@ -61,9 +69,21 @@ sh "$script" pause "$data" s9 2 >/dev/null
 check "pause 2: 1st skipped" no "$(fired stop "$(stop_json s9)")"
 check "pause 2: 2nd skipped" no "$(fired stop "$(stop_json s9)")"
 check "pause 2: 3rd fires" yes "$(fired stop "$(stop_json s9)")"
+sh "$script" pause "$data" s12 007 >/dev/null
+check "pause 007 means 7" "pause=7" "$(grep pause= "$data/sessions/s12.state")"
+check "pause huge number caps at 99" "Skipping the next 99 automatic quiz(zes)." "$(sh "$script" pause "$data" s12 99999999999999999999)"
 check "pause: bad argument" "Usage: /vibe-quiz:pause [n|off]" "$(sh "$script" pause "$data" s9 abc)"
 
 # robustness
+mkdir -p "$data/sessions" && printf 'turns=08\ncommits=x\npause=007\n' >"$data/sessions/s13.state"
+out=$(run stop "$(stop_json s13)" 2>&1 >/dev/null); code=$?
+check "corrupt state: exit 0" 0 "$code"
+if printf '%s' "$out" | grep -q .; then r=no; else r=yes; fi
+check "corrupt state: nothing on stderr" yes "$r"
+check "huge interval: no error" "" "$(CLAUDE_PLUGIN_OPTION_INTERVAL=99999999999999999999 run stop "$(stop_json s14)" 2>&1 >/dev/null)"
+run stop '{"session_id":"s15","background_tasks":[],"x":{"session_id":"other"}}' >/dev/null
+if [ -f "$data/sessions/s15.state" ] && [ ! -f "$data/sessions/other.state" ]; then r=yes; else r=no; fi
+check "first session_id wins" yes "$r"
 check "no data dir: silent" "" "$(CLAUDE_PLUGIN_DATA='' run stop "$(stop_json s10)")"
 check "unsafe session id is cleaned" yes "$(fired stop "$(stop_json '../../x')")"
 if [ -f "$data/sessions/x.state" ]; then r=yes; else r=no; fi

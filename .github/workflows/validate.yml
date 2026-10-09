@@ -17,7 +17,8 @@ jobs:
           sh tests/auto-quiz-test.sh
 
       - name: Install Claude Code
-        run: curl -fsSL https://claude.ai/install.sh | bash
+        # Pinned so a newer validator can't turn CI red on its own. Bump deliberately.
+        run: curl -fsSL https://claude.ai/install.sh | bash -s 2.1.295
 
       - name: Validate plugin
         run: ~/.local/bin/claude plugin validate --strict .
