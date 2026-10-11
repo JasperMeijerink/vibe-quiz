@@ -1,0 +1,24 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test hook script
+        run: |
+          shellcheck scripts/auto-quiz.sh tests/auto-quiz-test.sh
+          sh tests/auto-quiz-test.sh
+
+      - name: Install Claude Code
+        # Pinned so a newer validator can't turn CI red on its own. Bump deliberately.
+        run: curl -fsSL https://claude.ai/install.sh | bash -s 2.1.295
+
+      - name: Validate plugin
+        run: ~/.local/bin/claude plugin validate --strict .

@@ -1,7 +1,7 @@
 {
   "name": "vibe-quiz",
   "displayName": "Vibe Quiz",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Keeps you in the loop on AI-assisted work: short multiple-choice quizzes about what was just built and why, with configurable depth and frequency.",
   "author": {
     "name": "Jasper"
@@ -18,18 +18,18 @@
     "trigger": {
       "type": "string",
       "title": "Quiz trigger",
-      "description": "When quizzes start automatically: every N replies (turns) or every N commits. 'manual' means only when you run /vibe-quiz:quiz. Automatic triggers arrive in v0.2.",
+      "description": "When quizzes start automatically: every N Claude replies (turns) or every N commits. 'manual' means only when you run /vibe-quiz:quiz.",
       "options": [
         "manual",
         "turns",
         "commits"
       ],
-      "default": "manual"
+      "default": "turns"
     },
     "interval": {
       "type": "number",
       "title": "Interval",
-      "description": "For 'turns' or 'commits': quiz every N Claude replies or every N commits. Used from v0.2.",
+      "description": "For 'turns' or 'commits': quiz every N Claude replies or every N commits.",
       "min": 1,
       "max": 50,
       "default": 8

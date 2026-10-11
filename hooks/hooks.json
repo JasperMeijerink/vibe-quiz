@@ -1,0 +1,31 @@
+{
+  "description": "vibe-quiz: count replies and commits, and start a quick quiz every N",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh",
+            "args": ["stop"],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit *)",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh",
+            "args": ["commit"],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
