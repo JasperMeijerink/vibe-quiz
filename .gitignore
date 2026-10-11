@@ -2,4 +2,4 @@
 .idea/
 *.log
 .env
-scratch/
+scratch/.claude/worktrees/
