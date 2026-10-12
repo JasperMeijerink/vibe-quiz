@@ -23,7 +23,7 @@ claude plugin marketplace add JasperMeijerink/vibe-quiz
 claude plugin install vibe-quiz@vibe-quiz
 ```
 
-The repository is private for now, so this only works with access to it.
+Already in a session? Run `/reload-plugins` to load it there without restarting.
 
 The first time a quiz starts on its own, Claude Code asks permission to run the
 `vibe-quiz:quiz` skill. Pick "always allow" so it doesn't ask again.
@@ -39,7 +39,7 @@ The first time a quiz starts on its own, Claude Code asks permission to run the
 | `/vibe-quiz:pause <n>` | Skip the next n automatic quizzes |
 | `/vibe-quiz:pause off` | Turn automatic quizzes back on |
 
-To skip a single quiz, press Esc or pick "Other" and type "skip".
+To skip a single quiz, press Esc, or pick "Other" and type "skip".
 
 ## Settings
 
@@ -93,6 +93,11 @@ claude plugin validate --strict .
 
 The design and roadmap are in [SPEC.md](SPEC.md).
 
+## Feedback
+
+Found a bug, or a quiz question that missed the mark? Open an issue at
+[github.com/JasperMeijerink/vibe-quiz/issues](https://github.com/JasperMeijerink/vibe-quiz/issues).
+
 ## License
 
-All rights reserved for now. A license will be added when the project is opened up.
+MIT, see [LICENSE](LICENSE).

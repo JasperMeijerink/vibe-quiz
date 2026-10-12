@@ -9,6 +9,7 @@
   },
   "repository": "https://github.com/JasperMeijerink/vibe-quiz",
   "homepage": "https://github.com/JasperMeijerink/vibe-quiz#readme",
+  "license": "MIT",
   "keywords": [
     "learning",
     "quiz",
