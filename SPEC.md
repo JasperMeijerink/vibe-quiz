@@ -129,7 +129,7 @@ Only what automatic triggers need.
 vibe-quiz/
 ├── .claude-plugin/
 │   ├── plugin.json
-│   └── marketplace.json     (v0.3)
+│   └── marketplace.json
 ├── skills/
 │   ├── quiz/
 │   │   ├── SKILL.md
@@ -149,8 +149,8 @@ vibe-quiz/
 
 1. **v0.1 Manual (done):** `quiz` skill + `/vibe-quiz:quiz` + userConfig. Use it on your own projects.
 2. **v0.2 Automatic (done):** `Stop` hook + counter script for `turns` and `commits`, with the guards from §4; `/vibe-quiz:pause`; `trigger` defaults to `turns`; `claude plugin validate --strict` in CI.
-3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF; publish the marketplace.
-4. **v1.0 Reach:** make the repo public with an MIT license; submit to Anthropic's community directory; make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.
+3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json` and a publish-ready README (install, what the plugin runs and stores). The marketplace works for anyone with access to the repo, so it stays private for now.
+4. **v1.0 Reach:** make the repo public with an MIT license; submit to Anthropic's directory (it needs a license, and the repo must be public before the listing goes live, though review can start while it's private); make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.
 
 ## 12. Success criteria
 
