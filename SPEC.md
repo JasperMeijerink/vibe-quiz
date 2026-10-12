@@ -1,6 +1,6 @@
 # vibe-quiz — Spec (v0.2)
 
-> Repo: `vibe-quiz` (private for now). No license yet — all rights reserved. Plan: add MIT when open-sourcing.
+> Repo: `vibe-quiz`, public, MIT license.
 
 ## 1. Problem
 
@@ -141,15 +141,16 @@ vibe-quiz/
 ├── evals/                   (v0.3)
 ├── SPEC.md
 ├── README.md
-└── .gitignore               (LICENSE added when open-sourced)
+├── LICENSE                  (MIT)
+└── .gitignore
 ```
 
 ## 11. Milestones
 
 1. **v0.1 Manual (done):** `quiz` skill + `/vibe-quiz:quiz` + userConfig. Use it on your own projects.
 2. **v0.2 Automatic (done):** `Stop` hook + counter script for `turns` and `commits`, with the guards from §4; `/vibe-quiz:pause`; `trigger` defaults to `turns`; `claude plugin validate --strict` in CI.
-3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json` and a publish-ready README (install, what the plugin runs and stores). The marketplace works for anyone with access to the repo, so it stays private for now.
-4. **v1.0 Reach:** make the repo public with an MIT license; submit to Anthropic's directory (it needs a license, and the repo must be public before the listing goes live, though review can start while it's private); make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.
+3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json` and a publish-ready README (install, what the plugin runs and stores).
+4. **v1.0 Reach:** make the repo public with an MIT license (done); submit to Anthropic's directory; make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.
 
 ## 12. Success criteria
 
@@ -163,8 +164,8 @@ vibe-quiz/
 - *How a hook starts a quiz at a natural pause:* `Stop` hook + `additionalContext` (§4).
 - *Research sessions with no git activity:* `turns` is enough.
 - *Parallel agents on different branches:* count per session (§9).
+- *What Esc does on the prompt:* it ends the quiz (tested).
 - *Where the multiple-choice prompt works:* not in `claude -p`, `dontAsk` mode or with `--permission-prompts none`. The quiz handles that (§4). It works in the desktop app (tested).
 
 **Still open**
 - Does the prompt work in the IDE extensions? (It should; test it.)
-- What does Esc on the prompt do: return a "skipped" answer, or interrupt the turn? Either is fine for the user, but check it.
