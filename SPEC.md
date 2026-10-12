@@ -43,16 +43,16 @@ work happens → trigger fires → quiz skill gathers context
 
 **Delivery.** A quiz only ever starts from the `Stop` hook. When it fires, the hook returns `hookSpecificOutput.additionalContext` telling Claude to run the quiz skill. `PostToolUse` only counts, because context it injects arrives next to a tool result in the middle of a tool chain, not at a natural pause. ([hooks docs](https://code.claude.com/docs/en/hooks))
 
-Both hooks call `scripts/auto-quiz.sh` (POSIX `sh`, no dependencies). Every finished reply counts as a turn, including one that ran a manual quiz.
+Both hooks run `sh ${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh` (POSIX `sh`, no dependencies, no executable bit needed). Every finished reply counts as a turn, including one that ran a manual quiz.
 
 **Guards.** Don't fire when:
 - `stop_hook_active` is true (prevents loops; that reply isn't counted either)
-- `background_tasks` is non-empty (work is still running). The quiz stays due, but fires anyway at 2× the interval, because a dev server or watcher can stay listed all session
+- the moment is busy: `background_tasks` or `session_crons` is non-empty (work is running, or a `/loop` is scheduled), or Claude's last reply ends with a question to the user. The quiz stays due, but fires anyway at 2× the interval, because a dev server or watcher can stay listed all session
 - the session is paused (the due quiz is used up)
 
 Subagents fire `SubagentStop`, not `Stop`, so they never start a quiz.
 
-**Non-interactive runs.** A hook can't tell it is running under `claude -p` or CI, and in those runs the multiple-choice prompt doesn't exist. So the hook calls the skill with `--auto`, and an `--auto` quiz without AskUserQuestion does nothing. In practice `claude -p` already denies the model's Skill call (nobody can approve it), and the hook message tells Claude to end its turn silently in that case; this was tested. In an interactive session the first automatic quiz asks permission to run the skill; choosing "always allow" (or `Skill(vibe-quiz:quiz)` in `permissions.allow`) avoids the prompt after that. The plain-text fallback is only for a manual `/vibe-quiz:quiz`.
+**Non-interactive runs.** A hook can't tell it is running under `claude -p` or CI, and in those runs the multiple-choice prompt doesn't exist. So the hook calls the skill with `--auto`, and an `--auto` quiz without AskUserQuestion does nothing. In practice `claude -p` already denies the model's Skill call (nobody can approve it), and the hook message tells Claude to end its turn silently in that case; this was tested. In an interactive session the first automatic quiz asks permission to run the skill; choosing "always allow" (or `Skill(vibe-quiz:quiz *)` in `permissions.allow`, since the hook passes `--auto`) avoids the prompt after that. The plain-text fallback is only for a manual `/vibe-quiz:quiz`.
 
 **Dropped: `session_end`.** `SessionEnd` can't continue the conversation, and a quiz carried over to the next session would have lost the decisions from this one. It may come back later as an explicit wrap-up command.
 
@@ -91,7 +91,7 @@ Context comes from the recent conversation, `git status` / `git diff` / `git log
 
 **Disputes.** If the user says an answer was marked wrong unfairly, Claude re-checks the source and corrects itself if the user is right. Claude wrote the questions about its own work, so it can misremember.
 
-**Skipping.** The four slots in the prompt are all answers, so there is no "skip" option. The user skips by pressing Esc or by picking "Other" and typing "skip"; the intro line says so. If the prompt times out because the user is away, that counts as a skip too. Nothing is recorded either way.
+**Skipping.** The four slots in the prompt are all answers, so there is no "skip" option. The user skips by pressing Esc or by picking "Other" and typing "skip"; the intro line says so. If the prompt times out because the user is away, it submits only the questions already answered; those are graded and the rest count as skipped. Nothing is recorded either way.
 
 ## 7. Configuration
 
@@ -132,8 +132,7 @@ vibe-quiz/
 │   └── marketplace.json
 ├── skills/
 │   ├── quiz/
-│   │   ├── SKILL.md
-│   │   └── references/question-guide.md
+│   │   └── SKILL.md            (includes the question-writing guide)
 │   └── pause/SKILL.md
 ├── hooks/hooks.json
 ├── scripts/auto-quiz.sh

@@ -47,6 +47,15 @@ check "busy: still deferred" no "$(fired stop "$busy")"
 check "busy: fires at 2x interval" yes "$(fired stop "$busy")"
 export CLAUDE_PLUGIN_OPTION_INTERVAL=1
 
+# a reply that ends with a question, or a scheduled /loop, also defers a due quiz
+export CLAUDE_PLUGIN_OPTION_INTERVAL=1
+check "question: defers" no "$(fired stop "$(stop_json q1 ',"last_assistant_message":"SQLite or Postgres?"')")"
+check "question + trailing newline: defers" no "$(fired stop "$(stop_json q2 ',"last_assistant_message":"Which one?\n\n"')")"
+check "question with escaped quote: defers" no "$(fired stop "$(stop_json q3 ',"last_assistant_message":"Use \"fast\" mode?"')")"
+check "question mark mid-reply: fires" yes "$(fired stop "$(stop_json q4 ',"last_assistant_message":"Why? Because it is faster. Done."')")"
+check "loop scheduled: defers" no "$(fired stop "$(stop_json q5 ',"session_crons":[{"id":"c1"}]')")"
+check "no loop scheduled: fires" yes "$(fired stop "$(stop_json q6 ',"session_crons":[]')")"
+
 # manual trigger never fires
 export CLAUDE_PLUGIN_OPTION_TRIGGER=manual
 check "manual: never fires" no "$(fired stop "$(stop_json s6)")"
