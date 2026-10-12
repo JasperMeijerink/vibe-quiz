@@ -8,6 +8,8 @@ multiple-choice questions about what was just built in your session and, more im
 *why*. Answering takes about 30 seconds, and a wrong answer gets a one-line explanation that
 points to the file, commit or decision it came from.
 
+## Demo Video
+
 ![A Vibe Quiz pop-up in Claude Code: three multiple-choice questions about a change to a small weather CLI, one wrong answer explained, and a 2/3 summary](docs/images/demo.gif)
 
 ## Install
