@@ -149,7 +149,7 @@ vibe-quiz/
 
 1. **v0.1 Manual (done):** `quiz` skill + `/vibe-quiz:quiz` + userConfig. Use it on your own projects.
 2. **v0.2 Automatic (done):** `Stop` hook + counter script for `turns` and `commits`, with the guards from §4; `/vibe-quiz:pause`; `trigger` defaults to `turns`; `claude plugin validate --strict` in CI.
-3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json` and a publish-ready README (install, what the plugin runs and stores).
+3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json`, a publish-ready README (install, what the plugin runs and stores) and the demo GIF (`docs/images/demo.gif`).
 4. **v1.0 Reach:** make the repo public with an MIT license (done); submit to Anthropic's directory; make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.
 
 ## 12. Success criteria
