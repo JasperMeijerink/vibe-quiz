@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh",
-            "args": ["stop"],
+            "command": "sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh", "stop"],
             "timeout": 10
           }
         ]
@@ -20,8 +20,8 @@
           {
             "type": "command",
             "if": "Bash(git commit *)",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh",
-            "args": ["commit"],
+            "command": "sh",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh", "commit"],
             "timeout": 10
           }
         ]

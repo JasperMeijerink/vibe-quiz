@@ -66,12 +66,13 @@ Change these in `/config` under Vibe Quiz:
   deleted, and the folder is removed when you uninstall the plugin.
 - **No network access.** Nothing is sent anywhere by the plugin itself.
 
-Automatic quizzes only start at the end of one of Claude's replies, never inside subagents, and
-they stay silent in non-interactive runs such as `claude -p` and CI.
+Automatic quizzes only start at the end of one of Claude's replies, never inside subagents. They
+wait a little if Claude just asked you something or work is still running, and they stay silent
+in non-interactive runs such as `claude -p` and CI.
 
 ## Requirements
 
-Claude Code 2.1.275 or later, on macOS or Linux. The hook script uses POSIX `sh`, `sed` and
+Claude Code 2.1.275 or later, on macOS, Linux or WSL. The hook script uses POSIX `sh`, `sed` and
 `grep`.
 
 ## Uninstall

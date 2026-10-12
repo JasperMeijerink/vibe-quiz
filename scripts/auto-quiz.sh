@@ -128,9 +128,15 @@ if [ "$count" -lt "$interval" ]; then
   exit 0
 fi
 
-# Due. Wait for a calmer moment if background work is still running, but not
-# forever: a dev server or watcher can stay listed for the whole session.
-if [ "$count" -lt $((interval * 2)) ] && has '"background_tasks"[[:space:]]*:[[:space:]]*\[[[:space:]]*\{'; then
+# Due. Wait for a calmer moment, but not forever (a dev server can stay listed
+# all session): while background work runs, while a /loop is scheduled, or when
+# Claude's last reply asked the user something.
+busy() {
+  has '"background_tasks"[[:space:]]*:[[:space:]]*\[[[:space:]]*\{' ||
+    has '"session_crons"[[:space:]]*:[[:space:]]*\[[[:space:]]*\{' ||
+    has '"last_assistant_message"[[:space:]]*:[[:space:]]*"([^"\\]|\\.)*\?([[:space:]]|\\n)*"'
+}
+if [ "$count" -lt $((interval * 2)) ] && busy; then
   save
   exit 0
 fi
@@ -147,5 +153,5 @@ esac
 save
 find "$data/sessions" -type f -name '*.state*' -mtime +7 -exec rm -f {} + 2>/dev/null
 
-printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"vibe-quiz: time for a quick pop-up quiz. Invoke the vibe-quiz:quiz skill now with the argument --auto, then end your turn. If the skill cannot run here (denied, unavailable or non-interactive), end your turn silently: do not mention the quiz or the error."}}'
+printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"vibe-quiz: a quiz is due. Run the vibe-quiz:quiz skill with --auto and follow it to the end. If it is denied or unavailable, stop without comment."}}'
 exit 0
