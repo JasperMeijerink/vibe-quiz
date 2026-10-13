@@ -98,6 +98,18 @@ check "unsafe session id is cleaned" yes "$(fired stop "$(stop_json '../../x')")
 if [ -f "$data/sessions/x.state" ]; then r=yes; else r=no; fi
 check "state stays inside data dir" yes "$r"
 
+# cleanup: files untouched for 7 days are deleted after any finished reply
+mkdir -p "$data/sessions"
+printf 'turns=1\ncommits=0\npause=\n' >"$data/sessions/old.state"
+printf 'turns=1\ncommits=0\npause=\n' >"$data/sessions/recent.state"
+touch -t 202001010000 "$data/sessions/old.state"
+touch -t "$(date -v-6d +%Y%m%d%H%M 2>/dev/null || date -d '6 days ago' +%Y%m%d%H%M)" "$data/sessions/recent.state"
+run stop "$(stop_json s16)" >/dev/null
+if [ -f "$data/sessions/old.state" ]; then r=kept; else r=deleted; fi
+check "cleanup: 7+ days old deleted" deleted "$r"
+if [ -f "$data/sessions/recent.state" ]; then r=kept; else r=deleted; fi
+check "cleanup: 6 days old kept" kept "$r"
+
 echo
 if [ "$fails" -ne 0 ]; then echo "$fails failed"; exit 1; fi
 echo "all passed"

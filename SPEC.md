@@ -120,7 +120,7 @@ Only what automatic triggers need.
 
 - `${CLAUDE_PLUGIN_DATA}/sessions/<session_id>.state`: `key=value` lines with turns and commits since the last quiz, and the pause state. Counted per session, so parallel sessions and worktrees don't interfere.
 - Written only by bundled scripts. `CLAUDE_PLUGIN_DATA` is exported to hook processes but not to Claude's Bash tool, so the pause skill calls `scripts/auto-quiz.sh pause` with `${CLAUDE_PLUGIN_DATA}` and `${CLAUDE_SESSION_ID}` substituted into its Markdown.
-- When a quiz fires, the script prunes session files older than about a week.
+- After every finished reply (`Stop`), the script deletes session files untouched for 7 days (`find -mmin +10080`). Nothing else ages out until uninstall.
 - No answers, scores or source code are stored. Claude Code deletes the data folder when the plugin is uninstalled.
 
 ## 10. Repo layout
@@ -142,6 +142,8 @@ vibe-quiz/
 ├── SPEC.md
 ├── README.md
 ├── CONTRIBUTING.md
+├── PRIVACY.md
+├── assets/icon.png          (directory listing icon)
 ├── LICENSE                  (MIT)
 └── .gitignore
 ```

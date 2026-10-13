@@ -1,6 +1,6 @@
 ---
 name: quiz
-description: Quiz the user with short multiple-choice questions about what was built in this session and why, so they keep understanding their own project. Use when the user runs /vibe-quiz:quiz or asks to be quizzed on the current work.
+description: Quiz the user with short multiple-choice questions about what was built in this session and why, so they keep understanding their own project. Use when the user runs /vibe-quiz:quiz or asks to be quizzed on the current work, or when the vibe-quiz hook says a quiz is due.
 argument-hint: "[topic] [--depth recall|understand|apply|challenge]"
 allowed-tools: Bash(git status *) Bash(git diff *) Bash(git log *) Bash(git show *) Read Grep Glob
 ---
