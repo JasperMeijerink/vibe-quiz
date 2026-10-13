@@ -85,22 +85,11 @@ Claude Code 2.1.275 or later, on macOS, Linux or WSL. The hook script uses POSIX
 claude plugin uninstall vibe-quiz@vibe-quiz
 ```
 
-## Development
-
-Load the plugin from a local checkout for one session, then run the checks:
-
-```bash
-claude --plugin-dir /path/to/vibe-quiz
-sh tests/auto-quiz-test.sh
-claude plugin validate --strict .
-```
-
-The design and roadmap are in [SPEC.md](SPEC.md).
-
 ## Feedback
 
 Found a bug, or a quiz question that missed the mark? Open an issue at
 [github.com/JasperMeijerink/vibe-quiz/issues](https://github.com/JasperMeijerink/vibe-quiz/issues).
+Want to change the code yourself? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

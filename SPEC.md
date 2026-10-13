@@ -141,6 +141,7 @@ vibe-quiz/
 ├── evals/                   (v0.3)
 ├── SPEC.md
 ├── README.md
+├── CONTRIBUTING.md
 ├── LICENSE                  (MIT)
 └── .gitignore
 ```
@@ -151,21 +152,3 @@ vibe-quiz/
 2. **v0.2 Automatic (done):** `Stop` hook + counter script for `turns` and `commits`, with the guards from §4; `/vibe-quiz:pause`; `trigger` defaults to `turns`; `claude plugin validate --strict` in CI.
 3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json`, a publish-ready README (install, what the plugin runs and stores) and the demo GIF (`docs/images/demo.gif`).
 4. **v1.0 Reach:** make the repo public with an MIT license (done); submit to Anthropic's directory; make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.
-
-## 12. Success criteria
-
-- Your own use: still enabled after 2 weeks, and you don't keep pausing it.
-- Questions feel relevant, not like trivia, both in your own use and in the evals.
-- The context cost of the always-on part stays small: a short skill description; the full SKILL.md loads only when quizzing.
-
-## 13. Open questions
-
-**Resolved**
-- *How a hook starts a quiz at a natural pause:* `Stop` hook + `additionalContext` (§4).
-- *Research sessions with no git activity:* `turns` is enough.
-- *Parallel agents on different branches:* count per session (§9).
-- *What Esc does on the prompt:* it ends the quiz (tested).
-- *Where the multiple-choice prompt works:* not in `claude -p`, `dontAsk` mode or with `--permission-prompts none`. The quiz handles that (§4). It works in the desktop app (tested).
-
-**Still open**
-- Does the prompt work in the IDE extensions? (It should; test it.)
