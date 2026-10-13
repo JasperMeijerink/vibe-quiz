@@ -1,10 +1,10 @@
 {
   "name": "vibe-quiz",
   "displayName": "Vibe Quiz",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Keeps you in the loop on AI-assisted work: short multiple-choice quizzes about what was just built and why, with configurable depth and frequency.",
   "author": {
-    "name": "Jasper",
+    "name": "Jasper Meijerink",
     "url": "https://github.com/JasperMeijerink"
   },
   "repository": "https://github.com/JasperMeijerink/vibe-quiz",
@@ -52,24 +52,13 @@
     "depth": {
       "type": "string",
       "title": "Question depth",
-      "description": "recall = what was done, understand = why, apply = consequences, challenge = critique and alternatives.",
-      "options": [
-        "recall",
-        "understand",
-        "apply",
-        "challenge"
-      ],
+      "description": "One of: recall (what was done), understand (why), apply (consequences) or challenge (critique and alternatives).",
       "default": "understand"
     },
     "focus": {
       "type": "string",
       "title": "Question focus",
-      "description": "Ask about design decisions, about the implementation itself, or both.",
-      "options": [
-        "decisions",
-        "implementation",
-        "both"
-      ],
+      "description": "One of: decisions, implementation or both.",
       "default": "both"
     }
   }

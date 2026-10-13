@@ -105,6 +105,8 @@ All settings live in `userConfig` in `.claude-plugin/plugin.json`. Claude Code p
 | `depth` | `recall` / `understand` / `apply` / `challenge` | `understand` | |
 | `focus` | `decisions` / `implementation` / `both` | `both` | What questions are about |
 
+`depth` and `focus` have no `options` list (no dropdown in `/config`): Anthropic's directory can't yet screen listed values that are substituted into skill text, so the quiz skill checks the value itself and falls back to the default.
+
 ## 8. Commands
 
 | Name | Purpose |
@@ -143,7 +145,7 @@ vibe-quiz/
 ├── README.md
 ├── CONTRIBUTING.md
 ├── PRIVACY.md
-├── assets/icon.png          (directory listing icon)
+├── assets/                  (directory listing icon)
 ├── LICENSE                  (MIT)
 └── .gitignore
 ```
@@ -152,5 +154,5 @@ vibe-quiz/
 
 1. **v0.1 Manual (done):** `quiz` skill + `/vibe-quiz:quiz` + userConfig. Use it on your own projects.
 2. **v0.2 Automatic (done):** `Stop` hook + counter script for `turns` and `commits`, with the guards from §4; `/vibe-quiz:pause`; `trigger` defaults to `turns`; `claude plugin validate --strict` in CI.
-3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json`, a publish-ready README (install, what the plugin runs and stores) and the demo GIF (`docs/images/demo.gif`).
+3. **v0.3 Polish:** 3–5 `claude plugin eval` cases for question quality (grounded, no answer leakage, varied answer position); README with demo GIF. Done so far: `marketplace.json`, a publish-ready README (install, what the plugin runs and stores). The README's demo animation is stored on the separate `media` branch, so it isn't part of the plugin.
 4. **v1.0 Reach:** make the repo public with an MIT license (done); submit to Anthropic's directory; make the quiz skill portable (`.agents/skills/`) for Codex and others, documented as "manual mode" there.

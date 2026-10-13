@@ -1,5 +1,5 @@
 #!/bin/sh
-# vibe-quiz: decides when an automatic quiz starts. See SPEC.md §4 and §9.
+# vibe-quiz: decides when an automatic quiz starts.
 #
 #   auto-quiz.sh stop                       Stop hook (hook JSON on stdin)
 #   auto-quiz.sh commit                     PostToolUse hook for `git commit` (hook JSON on stdin)

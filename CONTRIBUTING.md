@@ -17,6 +17,8 @@ You only need this page if you want to change the plugin. To use it, see the
 - `skills/pause/SKILL.md` is the `/vibe-quiz:pause` command.
 - `hooks/hooks.json` and `scripts/auto-quiz.sh` decide when an automatic quiz starts.
 - `tests/auto-quiz-test.sh` tests that script.
+- The README's demo animation lives on the `media` branch, not in `main`. Everything in `main`
+  is part of the plugin that users install, so large media files stay out of it.
 
 The plugin is deliberately simple: two commands, a handful of settings, and no tracking of scores
 or answers. Please keep it that way unless an issue agrees otherwise.

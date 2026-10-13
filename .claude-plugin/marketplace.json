@@ -1,8 +1,8 @@
 {
   "name": "vibe-quiz",
-  "description": "Jasper's Claude Code plugins: vibe-quiz keeps you in the loop on AI-assisted work.",
+  "description": "Claude Code plugins by Jasper Meijerink: vibe-quiz keeps you in the loop on AI-assisted work.",
   "owner": {
-    "name": "Jasper",
+    "name": "Jasper Meijerink",
     "url": "https://github.com/JasperMeijerink"
   },
   "plugins": [
