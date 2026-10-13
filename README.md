@@ -101,7 +101,9 @@ Claude Code 2.1.275 or later, on macOS, Linux or Windows. The hook script uses P
 
 - **Windows:** needs [Git for Windows](https://git-scm.com/downloads/win) (Git Bash), which Claude
   Code uses to run hooks. WSL also works. With PowerShell only, automatic quizzes don't run, but
-  `/vibe-quiz:quiz` still works.
+  `/vibe-quiz:quiz` still works. Native Windows support hasn't been tested on a real Windows
+  machine yet (only in CI). If something doesn't work, please
+  [open an issue](https://github.com/JasperMeijerink/vibe-quiz/issues).
 
 In claude.ai chat, hooks don't run, so only manual quizzes work there.
 
