@@ -45,6 +45,22 @@ The first time a quiz starts on its own, Claude Code asks permission to run the
 
 To skip a single quiz, press Esc, or pick "Other" and type "skip".
 
+## Examples
+
+1. **Just keep working.** After every 8 of Claude's replies, a quiz with 3 questions pops up
+   about what was just built, such as "Why is the cache invalidated on write instead of on a
+   timer?". You click an answer for each, and a wrong answer gets a one-line explanation.
+2. **Check yourself after a big change.** Finished a refactor? Run `/vibe-quiz:quiz` to be
+   quizzed on the whole session so far.
+3. **Focus on one part, harder.** `/vibe-quiz:quiz auth --depth apply` asks only about the auth
+   work, with questions like "If two users log in at once, what happens with the current token
+   refresh?".
+4. **Ask in your own words.** "Quiz me on the caching change we just made" works too.
+5. **Quiz per commit instead of per reply.** In `/config`, set `trigger` to `commits` and
+   `interval` to 3 to get a quiz after every third commit.
+6. **Need a quiet stretch?** Run `/vibe-quiz:pause 2` before a demo to skip the next two
+   automatic quizzes, or `/vibe-quiz:pause` for the rest of the session.
+
 ## Settings
 
 Change these in `/config` under Vibe Quiz:
@@ -62,13 +78,17 @@ Change these in `/config` under Vibe Quiz:
 - **Hooks.** When Claude finishes a reply (`Stop`) or makes a git commit (`PostToolUse`), a
   small bundled shell script, `scripts/auto-quiz.sh`, updates a counter and decides whether a quiz
   is due. When one is due, it asks Claude to run the quiz skill.
-- **Quiz skill.** Claude reads the current conversation and runs read-only git commands
-  (`git status`, `git log`, `git diff`, `git show`) and file reads to write the questions.
-- **Stored data.** One small file per session in the plugin's data folder
-  (`~/.claude/plugins/data/…/sessions/`) holding the reply count, the commit count and the pause
-  state. Your answers, scores and code are never stored. Files older than about a week are
-  deleted, and the folder is removed when you uninstall the plugin.
+- **Quiz skill.** Claude writes the questions from what's already in the current session's
+  context, plus read-only git commands (`git status`, `git log`, `git diff`, `git show`) and
+  reads of files in your project. It doesn't look at past chats or memory.
+- **Stored data.** One small file per session (about 30 bytes) in the plugin's data folder
+  (`~/.claude/plugins/data/…/sessions/`), holding the reply count, the commit count and the pause
+  state. Your answers, scores and code are never stored. A session's file is deleted after 7 days
+  without activity (checked after every finished reply), and the whole folder is removed when you
+  uninstall the plugin.
 - **No network access.** Nothing is sent anywhere by the plugin itself.
+
+See [PRIVACY.md](PRIVACY.md) for the full privacy policy.
 
 Automatic quizzes only start at the end of one of Claude's replies, never inside subagents. They
 wait a little if Claude just asked you something or work is still running, and they stay silent
@@ -76,8 +96,32 @@ in non-interactive runs such as `claude -p` and CI.
 
 ## Requirements
 
-Claude Code 2.1.275 or later, on macOS, Linux or WSL. The hook script uses POSIX `sh`, `sed` and
-`grep`.
+Claude Code 2.1.275 or later, on macOS, Linux or WSL. The hook script uses POSIX `sh`, `sed`,
+`grep` and `find`.
+
+In claude.ai chat, hooks don't run, so only manual quizzes work there.
+
+## Troubleshooting
+
+- **No quiz pops up on its own.**
+  - Check in `/config` that `trigger` isn't `manual`, and what `interval` is set to.
+  - Run `/vibe-quiz:pause off` in case quizzes are paused.
+  - A due quiz also waits while Claude's last reply asks you something or background work is
+    running, for at most twice the interval.
+- **The plugin doesn't seem to be loaded.** Run `/reload-plugins`, or start a new session. Then
+  check `/plugin` for errors.
+- **Claude Code asks permission every time.** Choose "always allow", or add
+  `Skill(vibe-quiz:quiz *)` to `permissions.allow` in your settings.
+- **Quizzes come too often.**
+  - Raise `interval` in `/config`, or switch `trigger` to `commits`.
+  - Or pause with `/vibe-quiz:pause`.
+- **The questions are about older work.** There wasn't enough new work in the session yet. A
+  manual quiz then falls back to your recent commits and says so in its first line.
+- **Plain-text questions instead of a pop-up.** The clickable prompt isn't available there. Reply
+  like `1B 2D 3A`.
+- **Nothing happens in `claude -p` or CI.** That's by design: automatic quizzes stay silent when
+  nobody can answer.
+- **Windows.** Use WSL. The hook script needs a POSIX shell.
 
 ## Uninstall
 

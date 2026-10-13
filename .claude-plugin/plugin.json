@@ -1,7 +1,7 @@
 {
   "name": "vibe-quiz",
   "displayName": "Vibe Quiz",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Keeps you in the loop on AI-assisted work: short multiple-choice quizzes about what was just built and why, with configurable depth and frequency.",
   "author": {
     "name": "Jasper",
@@ -10,6 +10,10 @@
   "repository": "https://github.com/JasperMeijerink/vibe-quiz",
   "homepage": "https://github.com/JasperMeijerink/vibe-quiz#readme",
   "license": "MIT",
+  "icon": "./assets/icon.png",
+  "documentationUrl": "https://github.com/JasperMeijerink/vibe-quiz#readme",
+  "supportUrl": "https://github.com/JasperMeijerink/vibe-quiz/issues",
+  "privacyPolicyUrl": "https://github.com/JasperMeijerink/vibe-quiz/blob/main/PRIVACY.md",
   "keywords": [
     "learning",
     "quiz",

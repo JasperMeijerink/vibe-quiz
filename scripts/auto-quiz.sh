@@ -5,7 +5,8 @@
 #   auto-quiz.sh commit                     PostToolUse hook for `git commit` (hook JSON on stdin)
 #   auto-quiz.sh pause DATA_DIR SESSION [n|off]   called by the pause skill
 #
-# State is one small key=value file per session in DATA_DIR/sessions/.
+# State is one small key=value file per session in DATA_DIR/sessions/, deleted
+# after 7 days without activity.
 # No dependencies beyond POSIX sh, sed and grep. Never fails loudly: on any
 # problem it exits 0 and prints nothing, so a quiz is simply not started.
 
@@ -113,6 +114,10 @@ fi
 
 [ "$event" = stop ] || exit 0
 
+# Delete the state of sessions untouched for 7 days (168 hours). This runs after
+# every finished reply, so old files don't pile up while the plugin is in use.
+find "$data/sessions" -type f -name '*.state*' -mmin +10080 -exec rm -f {} + 2>/dev/null
+
 # Claude is already continuing because of a Stop hook (e.g. finishing a quiz).
 has '"stop_hook_active"[[:space:]]*:[[:space:]]*true' && exit 0
 
@@ -151,7 +156,6 @@ case $pause in
 esac
 
 save
-find "$data/sessions" -type f -name '*.state*' -mtime +7 -exec rm -f {} + 2>/dev/null
 
 printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"vibe-quiz: a quiz is due. Run the vibe-quiz:quiz skill with --auto and follow it to the end. If it is denied or unavailable, stop without comment."}}'
 exit 0
