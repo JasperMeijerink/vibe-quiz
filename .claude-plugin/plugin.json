@@ -1,7 +1,7 @@
 {
   "name": "vibe-quiz",
   "displayName": "Vibe Quiz",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Keeps you in the loop on AI-assisted work: short multiple-choice quizzes about what was just built and why, with configurable depth and frequency.",
   "author": {
     "name": "Jasper",

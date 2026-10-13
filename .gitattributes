@@ -1,0 +1,3 @@
+# Keep shell scripts LF on every checkout, including Git for Windows with
+# core.autocrlf=true: sh fails on CRLF line endings.
+*.sh text eol=lf

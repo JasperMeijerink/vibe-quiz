@@ -42,7 +42,9 @@ sh tests/auto-quiz-test.sh
 claude plugin validate --strict .
 ```
 
-GitHub CI runs both on every pull request, plus `shellcheck` on the shell scripts.
+GitHub CI runs both on every pull request, plus `shellcheck` on the shell scripts. It also runs
+the script test on Windows under Git Bash, so keep `scripts/auto-quiz.sh` to POSIX `sh` and the
+tools Git for Windows ships (`sed`, `grep`, `find`).
 
 ## Pull requests
 

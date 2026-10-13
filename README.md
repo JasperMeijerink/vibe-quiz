@@ -96,8 +96,12 @@ in non-interactive runs such as `claude -p` and CI.
 
 ## Requirements
 
-Claude Code 2.1.275 or later, on macOS, Linux or WSL. The hook script uses POSIX `sh`, `sed`,
+Claude Code 2.1.275 or later, on macOS, Linux or Windows. The hook script uses POSIX `sh`, `sed`,
 `grep` and `find`.
+
+- **Windows:** needs [Git for Windows](https://git-scm.com/downloads/win) (Git Bash), which Claude
+  Code uses to run hooks. WSL also works. With PowerShell only, automatic quizzes don't run, but
+  `/vibe-quiz:quiz` still works.
 
 In claude.ai chat, hooks don't run, so only manual quizzes work there.
 
@@ -121,7 +125,10 @@ In claude.ai chat, hooks don't run, so only manual quizzes work there.
   like `1B 2D 3A`.
 - **Nothing happens in `claude -p` or CI.** That's by design: automatic quizzes stay silent when
   nobody can answer.
-- **Windows.** Use WSL. The hook script needs a POSIX shell.
+- **A hook error after every reply on Windows.** Claude Code runs hooks through Git Bash, and
+  falls back to PowerShell when Git for Windows isn't installed. The hook script needs `sh`,
+  so install [Git for Windows](https://git-scm.com/downloads/win) and restart Claude Code, or use
+  WSL.
 
 ## Uninstall
 

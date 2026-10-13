@@ -22,3 +22,35 @@ jobs:
 
       - name: Validate plugin
         run: ~/.local/bin/claude plugin validate --strict .
+
+  windows:
+    # Native Windows under Git Bash, which is how Claude Code runs shell-form hooks there.
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shell scripts are checked out with LF line endings
+        run: |
+          if grep -l "$(printf '\r')" scripts/*.sh tests/*.sh; then
+            echo "CRLF found: check .gitattributes"; exit 1
+          fi
+
+      - name: Test hook script
+        run: sh tests/auto-quiz-test.sh
+
+      - name: Run the hook like Claude Code does on Windows
+        # Claude Code passes plugin paths in the forward-slash Win32 form (C:/...).
+        run: |
+          root=$(cygpath -m "$PWD")
+          export CLAUDE_PLUGIN_DATA="$(cygpath -m "$RUNNER_TEMP")/vibe-quiz-data"
+          export CLAUDE_PLUGIN_OPTION_INTERVAL=1
+          out=$(printf '{"session_id":"win","stop_hook_active":false,"background_tasks":[]}' |
+            bash -c "sh \"$root/scripts/auto-quiz.sh\" stop")
+          case $out in *vibe-quiz:quiz*) echo "stop hook: quiz fired" ;; *) echo "stop hook gave: '$out'"; exit 1 ;; esac
+          # The pause skill runs the script directly, without sh in front.
+          "$root/scripts/auto-quiz.sh" pause "$CLAUDE_PLUGIN_DATA" win 2
+          grep -qx 'pause=2' "$CLAUDE_PLUGIN_DATA/sessions/win.state"
+          cat "$CLAUDE_PLUGIN_DATA/sessions/win.state"

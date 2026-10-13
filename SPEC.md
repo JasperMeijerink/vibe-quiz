@@ -43,7 +43,7 @@ work happens → trigger fires → quiz skill gathers context
 
 **Delivery.** A quiz only ever starts from the `Stop` hook. When it fires, the hook returns `hookSpecificOutput.additionalContext` telling Claude to run the quiz skill. `PostToolUse` only counts, because context it injects arrives next to a tool result in the middle of a tool chain, not at a natural pause. ([hooks docs](https://code.claude.com/docs/en/hooks))
 
-Both hooks run `sh ${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh` (POSIX `sh`, no dependencies, no executable bit needed). Every finished reply counts as a turn, including one that ran a manual quiz.
+Both hooks run `sh "${CLAUDE_PLUGIN_ROOT}/scripts/auto-quiz.sh"` (POSIX `sh`, no dependencies, no executable bit needed). They use shell form (a `command` string, no `args`), so Claude Code starts them with `sh -c` on macOS and Linux and with Git Bash on native Windows, where `sh` isn't on the system `PATH` that exec form would search. Windows without Git for Windows falls back to PowerShell and can't run the script: manual quizzes only there. `.gitattributes` keeps `*.sh` at LF so a Windows checkout doesn't break the script. Every finished reply counts as a turn, including one that ran a manual quiz.
 
 **Guards.** Don't fire when:
 - `stop_hook_active` is true (prevents loops; that reply isn't counted either)
