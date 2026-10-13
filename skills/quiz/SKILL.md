@@ -19,7 +19,9 @@ about 30 seconds.
 | depth | `${user_config.depth}` | understand |
 | focus | `${user_config.focus}` | both |
 
-If a value above is empty or still reads literally as `${user_config...}`, use the default.
+If a value above is empty, still reads literally as `${user_config...}`, or isn't one of the
+allowed values (depth: recall, understand, apply, challenge; focus: decisions, implementation,
+both), use the default.
 If `questions_per_quiz` is out of range, clamp it to 1–4.
 
 Arguments: `$ARGUMENTS`

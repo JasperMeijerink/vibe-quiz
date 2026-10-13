@@ -16,12 +16,16 @@ jobs:
           shellcheck scripts/auto-quiz.sh tests/auto-quiz-test.sh
           sh tests/auto-quiz-test.sh
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install Claude Code
         # Pinned so a newer validator can't turn CI red on its own. Bump deliberately.
-        run: curl -fsSL https://claude.ai/install.sh | bash -s 2.1.295
+        run: npm install --global @anthropic-ai/claude-code@2.1.295
 
       - name: Validate plugin
-        run: ~/.local/bin/claude plugin validate --strict .
+        run: claude plugin validate --strict .
 
   windows:
     # Native Windows under Git Bash, which is how Claude Code runs shell-form hooks there.
@@ -44,7 +48,7 @@ jobs:
       - name: Run the hook like Claude Code does on Windows
         # Claude Code passes plugin paths in the forward-slash Win32 form (C:/...).
         run: |
-          root=$(cygpath -m "$PWD")
+          root=$(cygpath -m "$(pwd)")
           export CLAUDE_PLUGIN_DATA="$(cygpath -m "$RUNNER_TEMP")/vibe-quiz-data"
           export CLAUDE_PLUGIN_OPTION_INTERVAL=1
           out=$(printf '{"session_id":"win","stop_hook_active":false,"background_tasks":[]}' |
