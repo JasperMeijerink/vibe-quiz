@@ -29,20 +29,6 @@ claude plugin install vibe-quiz@vibe-quiz
 
 Already in a session? Run `/reload-plugins` to load it there without restarting.
 
-### Claude desktop app
-
-- **Code tab.** In a local (or SSH) session, type the `/plugin install` command above. Or click
-  **+** next to the prompt box, choose **Add plugins** (or **Plugins** > **Browse plugins**), add
-  the marketplace `JasperMeijerink/vibe-quiz`, then select vibe-quiz and choose a scope.
-- **Customize > Plugins.** Choose **Add** > **Add marketplace** and enter
-  `https://github.com/JasperMeijerink/vibe-quiz`. Then select the vibe-quiz plugin itself and
-  click **Add**: adding the marketplace alone installs nothing. Claude Code picks the plugin up as
-  `vibe-quiz@synced` the next time you start a session, signed in with the same claude.ai
-  account. `/reload-plugins` in a session that was already open doesn't load it.
-
-Cloud sessions and WSL sessions in the desktop app don't load plugins, so Vibe Quiz doesn't run
-there.
-
 The first time a quiz starts on its own, Claude Code asks permission to run the
 `vibe-quiz:quiz` skill. Pick "always allow" so it doesn't ask again.
 
@@ -131,9 +117,7 @@ In claude.ai chat, hooks don't run, so only manual quizzes work there.
 - **The plugin doesn't seem to be loaded.** Run `/reload-plugins`, or start a new session. Then
   check `/plugin` for errors.
 - **Added the marketplace but the plugin isn't there.** A marketplace is only a list of plugins.
-  Install vibe-quiz from it too: select it under **Customize > Plugins** and click **Add**, or
-  run `/plugin install vibe-quiz@vibe-quiz`. A plugin added under **Customize** reaches Claude Code
-  when you start a new session. It doesn't load in cloud or WSL sessions.
+  Install vibe-quiz from it too: `claude plugin install vibe-quiz@vibe-quiz`.
 - **Claude Code asks permission every time.** Choose "always allow", or add
   `Skill(vibe-quiz:quiz *)` to `permissions.allow` in your settings.
 - **Quizzes come too often.**
